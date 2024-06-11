@@ -52,6 +52,9 @@ int main(int argc, char *argv[argc + 1]) {
     }
   }
 
+  WriteEndFile(outputASM);
+
   fclose(inputVM);
+  fclose(outputASM);
   return EXIT_SUCCESS;
 }
