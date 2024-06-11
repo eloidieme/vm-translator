@@ -10,11 +10,12 @@
 
 int main(int argc, char *argv[argc + 1]) {
   FILE *inputVM;
+  char *const inputFileName = argv[1];
   char currentCmd[BUFFER_SIZE];
   char tokens[MAX_TOKENS_IN_CMD][BUFFER_SIZE];
   size_t compIndex = 0;
 
-  inputVM = fopen(argv[1], "r");
+  inputVM = fopen(inputFileName, "r");
   if (inputVM == NULL) {
     perror("Error opening input file:");
     errno = 0;
@@ -47,7 +48,7 @@ int main(int argc, char *argv[argc + 1]) {
       int arg2 = GetArg2(cmdT, tokens);
       enum segment seg = GetSegment(tokens);
       fprintf(outputASM, "// %s", currentCmd);
-      WritePushPop(cmdT, seg, arg2, outputASM, "BasicTest.vm");
+      WritePushPop(cmdT, seg, arg2, outputASM, inputFileName);
     }
   }
 
