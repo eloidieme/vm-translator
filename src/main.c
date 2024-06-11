@@ -33,24 +33,14 @@ int main(int argc, char *argv[argc + 1]) {
   }
 
   while (HasMoreCommands(currentCmd, inputVM)) {
-    printf("%s", currentCmd);
     TokenizeCmd(currentCmd, tokens);
     enum cmdType cmdT = GetCmdType(tokens);
-    printf("%d ", cmdT);
     if (cmdT != C_RETURN && cmdT != C_UNKNOWN) {
-      char *const arg1 = GetArg1(cmdT, tokens);
-      char *loc = strchr(arg1, '\n');
-      if (loc) {
-        *(loc - 1) = '\0';
-      }
-      printf("%s ", arg1);
       if (cmdT == C_ARITHMETIC) {
         enum operation op = GetOperation(tokens);
         fprintf(outputASM, "// %s", currentCmd);
         WriteArithmetic(op, &compIndex, outputASM);
       }
-    } else {
-      printf("(na1) ");
     }
     if (cmdT == C_POP || cmdT == C_PUSH || cmdT == C_CALL ||
         cmdT == C_FUNCTION) {
@@ -58,9 +48,6 @@ int main(int argc, char *argv[argc + 1]) {
       enum segment seg = GetSegment(tokens);
       fprintf(outputASM, "// %s", currentCmd);
       WritePushPop(cmdT, seg, arg2, outputASM, "BasicTest.vm");
-      printf("%d\n", arg2);
-    } else {
-      printf("(na2)\n");
     }
   }
 
