@@ -12,6 +12,7 @@ int main(int argc, char *argv[argc + 1]) {
   FILE *inputVM;
   char currentCmd[BUFFER_SIZE];
   char tokens[MAX_TOKENS_IN_CMD][BUFFER_SIZE];
+  size_t compIndex = 0;
 
   inputVM = fopen(argv[1], "r");
   if (inputVM == NULL) {
@@ -46,7 +47,7 @@ int main(int argc, char *argv[argc + 1]) {
       if (cmdT == C_ARITHMETIC) {
         enum operation op = GetOperation(tokens);
         fprintf(outputASM, "// %s", currentCmd);
-        WriteArithmetic(op, outputASM);
+        WriteArithmetic(op, &compIndex, outputASM);
       }
     } else {
       printf("(na1) ");

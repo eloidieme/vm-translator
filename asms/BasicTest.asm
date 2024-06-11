@@ -160,7 +160,7 @@ A=M
 M=D
 // push local 0
 @LCL
-A=M
+D=M
 @0
 D=D+A
 @R14
@@ -174,7 +174,7 @@ M=D
 M=M+1
 // push that 5
 @THAT
-A=M
+D=M
 @5
 D=D+A
 @R14
@@ -196,7 +196,7 @@ A=M-1
 M=D+M
 // push argument 1
 @ARG
-A=M
+D=M
 @1
 D=D+A
 @R14
@@ -218,7 +218,7 @@ A=M-1
 M=M-D
 // push this 6
 @THIS
-A=M
+D=M
 @6
 D=D+A
 @R14
@@ -232,7 +232,7 @@ M=D
 M=M+1
 // push this 6
 @THIS
-A=M
+D=M
 @6
 D=D+A
 @R14
@@ -261,7 +261,19 @@ M=M-1
 A=M-1
 M=M-D
 // push temp 6
+@5
+D=A
+@6
+D=D+A
+@R14
+M=D
+A=M
+D=M
 @SP
+A=M
+M=D
+@SP
+M=M+1
 // add
 @SP
 A=M-1

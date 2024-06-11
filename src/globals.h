@@ -3,7 +3,6 @@
 
 #define BUFFER_SIZE 2048
 #define MAX_TOKENS_IN_CMD 3
-#define PLACEHOLDER_STR "000000000000000"
 #define PLACEHOLDER_SIZE 15
 
 enum cmdType {
