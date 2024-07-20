@@ -3,34 +3,44 @@
 #include <stdio.h>
 #include <string.h>
 
-bool HasMoreCommands(char *currentCmd, FILE *inputFile) {
+bool HasMoreCommands(char *currentCmd, FILE *inputFile)
+{
   // Are there more commands in the input?
   return (fgets(currentCmd, BUFFER_SIZE, inputFile) != NULL);
 }
 
 void TokenizeCmd(char *currentCmd,
-                 char tokens[static MAX_TOKENS_IN_CMD][BUFFER_SIZE]) {
-  for (size_t l = 0; l < MAX_TOKENS_IN_CMD; ++l) {
+                 char tokens[static MAX_TOKENS_IN_CMD][BUFFER_SIZE])
+{
+  for (size_t l = 0; l < MAX_TOKENS_IN_CMD; ++l)
+  {
     memset(tokens[l], '0', PLACEHOLDER_SIZE);
   }
-  if (currentCmd[0] == '/') {
+  if (currentCmd[0] == '/')
+  {
     return;
   }
   char remainingCmd[strlen(currentCmd)];
   unsigned readBytes = 0;
   size_t idx = 0;
   strncpy(remainingCmd, currentCmd, strlen(currentCmd));
-  while (1) {
+  while (1)
+  {
     readBytes = strcspn(remainingCmd, " ");
-    for (size_t i = 0; i < readBytes; ++i) {
+    for (size_t i = 0; i < readBytes; ++i)
+    {
       tokens[idx][i] = remainingCmd[i];
     }
     tokens[idx][readBytes] = '\0';
-    if (readBytes == strlen(remainingCmd)) {
+    if (readBytes == strlen(remainingCmd))
+    {
       break;
-    } else {
+    }
+    else
+    {
       unsigned currLength = strlen(remainingCmd);
-      for (size_t j = readBytes + 1; j < currLength; ++j) {
+      for (size_t j = readBytes + 1; j < currLength; ++j)
+      {
         remainingCmd[j - (readBytes + 1)] = remainingCmd[j];
       }
       unsigned newLength = currLength - (readBytes + 1);
@@ -40,13 +50,16 @@ void TokenizeCmd(char *currentCmd,
   }
 }
 
-enum cmdType GetCmdType(char tokens[static MAX_TOKENS_IN_CMD][BUFFER_SIZE]) {
+enum cmdType GetCmdType(char tokens[static MAX_TOKENS_IN_CMD][BUFFER_SIZE])
+{
   // Returns a cst representing the type of the current command.
   // C_ARITHMETIC is returned for all the arithmetic/logical commands.
-  if (!strncmp(tokens[0], "push", strlen("push"))) {
+  if (!strncmp(tokens[0], "push", strlen("push")))
+  {
     return C_PUSH;
   }
-  if (!strncmp(tokens[0], "pop", strlen("pop"))) {
+  if (!strncmp(tokens[0], "pop", strlen("pop")))
+  {
     return C_POP;
   }
   if (!strncmp(tokens[0], "add", strlen("add")) ||
@@ -57,13 +70,15 @@ enum cmdType GetCmdType(char tokens[static MAX_TOKENS_IN_CMD][BUFFER_SIZE]) {
       !strncmp(tokens[0], "lt", strlen("lt")) ||
       !strncmp(tokens[0], "and", strlen("and")) ||
       !strncmp(tokens[0], "not", strlen("not")) ||
-      !strncmp(tokens[0], "or", strlen("or"))) {
+      !strncmp(tokens[0], "or", strlen("or")))
+  {
     return C_ARITHMETIC;
   }
   return C_UNKNOWN;
 }
 
-enum segment GetSegment(char tokens[static MAX_TOKENS_IN_CMD][BUFFER_SIZE]) {
+enum segment GetSegment(char tokens[static MAX_TOKENS_IN_CMD][BUFFER_SIZE])
+{
   char *const segName = tokens[1];
   if (!strncmp(segName, "local", strlen("local")))
     return S_LCL;
@@ -85,7 +100,8 @@ enum segment GetSegment(char tokens[static MAX_TOKENS_IN_CMD][BUFFER_SIZE]) {
 }
 
 enum operation
-GetOperation(char tokens[static MAX_TOKENS_IN_CMD][BUFFER_SIZE]) {
+GetOperation(char tokens[static MAX_TOKENS_IN_CMD][BUFFER_SIZE])
+{
   char *const opName = tokens[0];
   if (!strncmp(opName, "add", strlen("add")))
     return O_ADD;
@@ -108,11 +124,13 @@ GetOperation(char tokens[static MAX_TOKENS_IN_CMD][BUFFER_SIZE]) {
   return O_UNKNOWN;
 }
 
-char *const GetArg1(enum cmdType cmdT, char tokens[static 3][BUFFER_SIZE]) {
+char *const GetArg1(enum cmdType cmdT, char tokens[static 3][BUFFER_SIZE])
+{
   // Returns the first arg of the current command.
   // In the case of C_ARITHMETIC, the command itself is returned.
   // Should not be called if the current command is C_RETURN.
-  switch (cmdT) {
+  switch (cmdT)
+  {
   case C_PUSH:
     return tokens[1];
   case C_POP:
@@ -127,11 +145,13 @@ char *const GetArg1(enum cmdType cmdT, char tokens[static 3][BUFFER_SIZE]) {
   }
 }
 
-int GetArg2(enum cmdType cmdT, char tokens[static 3][BUFFER_SIZE]) {
+int GetArg2(enum cmdType cmdT, char tokens[static 3][BUFFER_SIZE])
+{
   // Returns the second argument of the current command.
   // Should be called only if the current command is C_PUSH,
   // C_POP, C_FUNCTION, or C_CALL.
-  switch (cmdT) {
+  switch (cmdT)
+  {
   case C_PUSH:
     return strtol(tokens[2], 0, 10);
   case C_POP:

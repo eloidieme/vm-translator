@@ -22,29 +22,29 @@ A=M
 M=D
 @SP
 M=M+1
-// pop static 8
+// pop static 123
 @SP
 M=M-1
 A=M
 D=M
-@BasicTest.8
+@StaticTest.123
 M=D
 // pop static 3
 @SP
 M=M-1
 A=M
 D=M
-@BasicTest.3
+@StaticTest.3
 M=D
 // pop static 1
 @SP
 M=M-1
 A=M
 D=M
-@BasicTest.
+@StaticTest.1
 M=D
 // push static 3
-@BasicTest.3
+@StaticTest.3
 D=M
 @SP
 A=M
@@ -52,7 +52,7 @@ M=D
 @SP
 @M=M+1
 // push static 1
-@BasicTest.
+@StaticTest.1
 D=M
 @SP
 A=M
@@ -68,7 +68,7 @@ M=M-1
 A=M-1
 M=M-D
 // push static 8
-@BasicTest.8
+@StaticTest.8
 D=M
 @SP
 A=M
@@ -83,3 +83,6 @@ D=M
 M=M-1
 A=M-1
 M=D+M
+(END)
+@END
+0;JMP

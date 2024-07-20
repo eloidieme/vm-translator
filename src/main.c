@@ -8,7 +8,8 @@
 #include "globals.h"
 #include "parser.h"
 
-int main(int argc, char *argv[argc + 1]) {
+int main(int argc, char *argv[argc + 1])
+{
   FILE *inputVM;
   char *const inputFileName = argv[1];
   char currentCmd[BUFFER_SIZE];
@@ -16,7 +17,8 @@ int main(int argc, char *argv[argc + 1]) {
   size_t compIndex = 0;
 
   inputVM = fopen(inputFileName, "r");
-  if (inputVM == NULL) {
+  if (inputVM == NULL)
+  {
     perror("Error opening input file:");
     errno = 0;
     fclose(inputVM);
@@ -26,25 +28,30 @@ int main(int argc, char *argv[argc + 1]) {
   FILE *outputASM;
 
   outputASM = fopen(argv[2], "w");
-  if (outputASM == NULL) {
+  if (outputASM == NULL)
+  {
     perror("Error opening output file:");
     errno = 0;
     fclose(outputASM);
     return EXIT_FAILURE;
   }
 
-  while (HasMoreCommands(currentCmd, inputVM)) {
+  while (HasMoreCommands(currentCmd, inputVM))
+  {
     TokenizeCmd(currentCmd, tokens);
     enum cmdType cmdT = GetCmdType(tokens);
-    if (cmdT != C_RETURN && cmdT != C_UNKNOWN) {
-      if (cmdT == C_ARITHMETIC) {
+    if (cmdT != C_RETURN && cmdT != C_UNKNOWN)
+    {
+      if (cmdT == C_ARITHMETIC)
+      {
         enum operation op = GetOperation(tokens);
         fprintf(outputASM, "// %s", currentCmd);
         WriteArithmetic(op, &compIndex, outputASM);
       }
     }
     if (cmdT == C_POP || cmdT == C_PUSH || cmdT == C_CALL ||
-        cmdT == C_FUNCTION) {
+        cmdT == C_FUNCTION)
+    {
       int arg2 = GetArg2(cmdT, tokens);
       enum segment seg = GetSegment(tokens);
       fprintf(outputASM, "// %s", currentCmd);

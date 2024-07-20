@@ -3,7 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
-void BinaryOperationHelper(FILE *outputFile) {
+void BinaryOperationHelper(FILE *outputFile)
+{
   fprintf(outputFile, "@SP\n");
   fprintf(outputFile, "A=M-1\n");
   fprintf(outputFile, "D=M\n");
@@ -12,13 +13,15 @@ void BinaryOperationHelper(FILE *outputFile) {
   fprintf(outputFile, "A=M-1\n");
 }
 
-void UnaryOperationHelper(FILE *outputFile) {
+void UnaryOperationHelper(FILE *outputFile)
+{
   fprintf(outputFile, "@SP\n");
   fprintf(outputFile, "A=M-1\n");
 }
 
 void ComparisonOperationHelper(enum operation op, size_t *compIndex,
-                               FILE *outputFile) {
+                               FILE *outputFile)
+{
   fprintf(outputFile, "@SP\n");
   fprintf(outputFile, "A=M-1\n");
   fprintf(outputFile, "D=M\n");
@@ -26,7 +29,8 @@ void ComparisonOperationHelper(enum operation op, size_t *compIndex,
   fprintf(outputFile, "M=M-1\n");
   fprintf(outputFile, "A=M-1\n");
   fprintf(outputFile, "D=M-D\n");
-  switch (op) {
+  switch (op)
+  {
   case O_EQ:
     fprintf(outputFile, "@EQUAL.%zu\n", *compIndex);
     fprintf(outputFile, "D;JEQ\n");
@@ -46,7 +50,8 @@ void ComparisonOperationHelper(enum operation op, size_t *compIndex,
   fprintf(outputFile, "@SP\n");
   fprintf(outputFile, "A=M-1\n");
   fprintf(outputFile, "M=0\n");
-  switch (op) {
+  switch (op)
+  {
   case O_EQ:
     fprintf(outputFile, "@NOTEQUAL.%zu\n", *compIndex);
     break;
@@ -61,7 +66,8 @@ void ComparisonOperationHelper(enum operation op, size_t *compIndex,
     break;
   }
   fprintf(outputFile, "0;JMP\n");
-  switch (op) {
+  switch (op)
+  {
   case O_EQ:
     fprintf(outputFile, "(EQUAL.%zu)\n", *compIndex);
     break;
@@ -78,7 +84,8 @@ void ComparisonOperationHelper(enum operation op, size_t *compIndex,
   fprintf(outputFile, "@SP\n");
   fprintf(outputFile, "A=M-1\n");
   fprintf(outputFile, "M=-1\n");
-  switch (op) {
+  switch (op)
+  {
   case O_EQ:
     fprintf(outputFile, "(NOTEQUAL.%zu)\n", *compIndex);
     break;
@@ -95,10 +102,12 @@ void ComparisonOperationHelper(enum operation op, size_t *compIndex,
   *compIndex += 1;
 }
 
-void WriteArithmetic(enum operation op, size_t *compIndex, FILE *outputFile) {
+void WriteArithmetic(enum operation op, size_t *compIndex, FILE *outputFile)
+{
   // Writes to the output file the assembly code that
   // implements the given arithmetic command.
-  switch (op) {
+  switch (op)
+  {
   case O_ADD:
     BinaryOperationHelper(outputFile);
     fprintf(outputFile, "M=D+M\n");
@@ -143,7 +152,8 @@ void WriteArithmetic(enum operation op, size_t *compIndex, FILE *outputFile) {
   }
 }
 
-void PushArgLclThisThatHelper(size_t index, FILE *outputFile) {
+void PushArgLclThisThatHelper(size_t index, FILE *outputFile)
+{
   fprintf(outputFile, "D=M\n");
   fprintf(outputFile, "@%zu\n", index);
   fprintf(outputFile, "D=D+A\n");
@@ -158,7 +168,8 @@ void PushArgLclThisThatHelper(size_t index, FILE *outputFile) {
   fprintf(outputFile, "M=M+1\n");
 }
 
-void PopArgLclThisThatHelper(size_t index, FILE *outputFile) {
+void PopArgLclThisThatHelper(size_t index, FILE *outputFile)
+{
   fprintf(outputFile, "A=M\n");
   fprintf(outputFile, "D=A\n");
   fprintf(outputFile, "@%zu\n", index);
@@ -175,27 +186,45 @@ void PopArgLclThisThatHelper(size_t index, FILE *outputFile) {
 }
 
 void ConvertNameStatic(enum cmdType commandT, size_t index, FILE *outputFile,
-                       char *const inputFilename) {
-  char varName[strlen(inputFilename) + 10];
+                       char *const inputFilename)
+{
+  char varName[strlen(inputFilename)];
   size_t k;
-  for (k = 0; k < strlen(inputFilename); ++k) {
-    if (inputFilename[k] != '.') {
-      varName[k] = inputFilename[k];
-    } else {
+  for (k = 0; k < strlen(inputFilename); ++k)
+  {
+    varName[k] = inputFilename[k];
+    if (inputFilename[k] == '.')
+    {
       break;
     }
   }
-  varName[k] = '.';
-  int strIndexSize = (int)((ceil(log10(index)) + 1) * sizeof(char));
-  char strindex[strIndexSize];
-  snprintf(strindex, strIndexSize, "%zu", index);
-  for (size_t l = 0; l < strIndexSize; ++l) {
-    varName[k + l + 1] = strindex[l];
+
+  int strIndexSize = ceil(log10(index + 1)) + 1;
+  char *strIndex = (char *)calloc(strIndexSize, sizeof(char));
+  snprintf(strIndex, (strIndexSize - 1) * sizeof(int), "%zu", index);
+  strIndex[strIndexSize - 1] = '\0';
+  for (size_t l = 0; l < strIndexSize; ++l)
+  {
+    varName[k + l + 1] = strIndex[l];
   }
-  varName[k + strIndexSize + 1] = '\0';
-  switch (commandT) {
+  free(strIndex);
+
+  char finalVarName[strlen(varName)];
+  char *last_slash = strrchr(varName, '/');
+
+  if (last_slash != NULL)
+  {
+    strcpy(finalVarName, last_slash + 1);
+  }
+  else
+  {
+    strcpy(finalVarName, varName);
+  }
+
+  switch (commandT)
+  {
   case C_PUSH:
-    fprintf(outputFile, "@%s\n", varName);
+    fprintf(outputFile, "@%s\n", finalVarName);
     fprintf(outputFile, "D=M\n");
     fprintf(outputFile, "@SP\n");
     fprintf(outputFile, "A=M\n");
@@ -208,7 +237,7 @@ void ConvertNameStatic(enum cmdType commandT, size_t index, FILE *outputFile,
     fprintf(outputFile, "M=M-1\n");
     fprintf(outputFile, "A=M\n");
     fprintf(outputFile, "D=M\n");
-    fprintf(outputFile, "@%s\n", varName);
+    fprintf(outputFile, "@%s\n", finalVarName);
     fprintf(outputFile, "M=D\n");
     break;
   default:
@@ -216,18 +245,22 @@ void ConvertNameStatic(enum cmdType commandT, size_t index, FILE *outputFile,
   }
 }
 
-void WriteEndFile(FILE *outputFile) {
+void WriteEndFile(FILE *outputFile)
+{
   fprintf(outputFile, "(END)\n@END\n0;JMP\n");
 }
 
 void WritePushPop(enum cmdType commandT, enum segment seg, size_t index,
-                  FILE *outputFile, char *const inputFilename) {
+                  FILE *outputFile, char *const inputFilename)
+{
   // Writes to the ouptut file the assembly code that
   // implements the given command, where command is either
   // C_PUSH or C_POP.
-  switch (commandT) {
+  switch (commandT)
+  {
   case C_PUSH:
-    switch (seg) {
+    switch (seg)
+    {
     case S_ARG:
       fprintf(outputFile, "@ARG\n");
       PushArgLclThisThatHelper(index, outputFile);
@@ -246,7 +279,8 @@ void WritePushPop(enum cmdType commandT, enum segment seg, size_t index,
       PushArgLclThisThatHelper(index, outputFile);
       break;
     case S_PTR:
-      switch (index) {
+      switch (index)
+      {
       case 0:
         fprintf(outputFile, "@THIS\n");
         break;
@@ -297,7 +331,8 @@ void WritePushPop(enum cmdType commandT, enum segment seg, size_t index,
     }
     break;
   case C_POP:
-    switch (seg) {
+    switch (seg)
+    {
     case S_ARG:
       fprintf(outputFile, "@ARG\n");
       PopArgLclThisThatHelper(index, outputFile);
@@ -315,7 +350,8 @@ void WritePushPop(enum cmdType commandT, enum segment seg, size_t index,
       fprintf(outputFile, "M=M-1\n");
       fprintf(outputFile, "A=M\n");
       fprintf(outputFile, "D=M\n");
-      switch (index) {
+      switch (index)
+      {
       case 0:
         fprintf(outputFile, "@THIS\n");
         break;

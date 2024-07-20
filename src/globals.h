@@ -5,7 +5,8 @@
 #define MAX_TOKENS_IN_CMD 3
 #define PLACEHOLDER_SIZE 15
 
-enum cmdType {
+enum cmdType
+{
   C_UNKNOWN = -1,
   C_ARITHMETIC,
   C_PUSH,
@@ -18,7 +19,8 @@ enum cmdType {
   C_CALL
 };
 
-enum segment {
+enum segment
+{
   S_UNKNOWN = -2,
   S_LCL = 9,
   S_ARG,
@@ -30,7 +32,8 @@ enum segment {
   S_PTR
 };
 
-enum operation {
+enum operation
+{
   O_UNKNOWN = -3,
   O_ADD = 17,
   O_SUB,

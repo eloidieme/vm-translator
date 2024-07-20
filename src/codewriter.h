@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <tgmath.h>
+#include <stdlib.h>
 
 #include "globals.h"
 
